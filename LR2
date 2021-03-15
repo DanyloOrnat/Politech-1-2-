@@ -1,0 +1,221 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <cmath>
+#include <iostream>
+using namespace std;
+
+class Fraction
+{
+	friend istream& operator>>(istream& in, Fraction& Fr)
+	{
+		return in >> *Fr.numerator >> *Fr.denominator;
+	}
+	friend ostream& operator<<(ostream& out, const Fraction& Fr)
+	{
+		return out << *Fr.numerator << "/" << *Fr.denominator << endl;
+	}
+	
+
+private:
+	int* numerator = new int;
+	int* denominator = new int;
+
+public:
+	Fraction() { *numerator = 0; *denominator = 10; cout << "Constructor complete \n"; }
+
+	Fraction(const Fraction& CopyFromME)
+	{
+		this->numerator = CopyFromME.numerator;
+		this->denominator = CopyFromME.denominator;
+		cout << "Constructor complete \n";
+	}
+	Fraction(int a, int b) { *numerator = a; *denominator = b; cout << "Constructor complete \n"; }
+
+	~Fraction() { delete numerator; delete denominator; cout << "Destructor complete \n"; }
+
+
+	int Get_Num() { return *this->numerator; }
+
+	int Get_Den() { return *this->denominator; }
+
+
+	void Set_Num(int a) { *this->numerator = a; }
+
+	void Set_Den(int b) { *this->denominator = b; }
+
+
+	//void Add(Fraction&, Fraction&); // Додавання
+
+	//void Sub(Fraction&, Fraction&);// Віднімання
+
+	//void Multi(Fraction&, Fraction&);//Множення
+
+	void Div(Fraction&, Fraction&);// Ділення
+
+	void SwapF(Fraction&);
+
+	void Simpl(void); // спрощення
+
+	Fraction* operator+(Fraction &fr)
+	{
+		Fraction* f = new Fraction;
+		*f->denominator = *fr.denominator * (*this->denominator);
+		*f->numerator = (*this->numerator) * (*fr.denominator) + (*fr.numerator) * (*this->denominator);
+
+		return f;
+	}
+
+	 bool operator>(Fraction& fr) 
+	{		
+		if ((*this->numerator)/(*this->denominator)>= (*fr.numerator)/(*fr.denominator))
+		{
+			return true;
+		}
+		else 
+		{
+			return false;
+		}
+	}
+
+};
+
+void  Fraction::SwapF(Fraction& Swap_with_me)
+{
+	int save = this->Get_Num();
+	this->Set_Num(Swap_with_me.Get_Num());
+	Swap_with_me.Set_Num(save);
+
+	save = this->Get_Den();
+	this->Set_Den(Swap_with_me.Get_Den());
+	Swap_with_me.Set_Den(save);
+}
+
+//void Fraction::Add(Fraction& First, Fraction& Second)// Додавання
+//{
+//	this->Set_Num(First.Get_Num() * Second.Get_Den() + Second.Get_Num() * First.Get_Den());
+//	this->Set_Den(First.Get_Den() * Second.Get_Den());
+//}
+//
+//void Fraction::Sub(Fraction& First, Fraction& Second)//Віднімання
+//{
+//	this->Set_Num(First.Get_Num() * Second.Get_Den() - Second.Get_Num() * First.Get_Den());
+//	this->Set_Den(First.Get_Den() * Second.Get_Den());
+//}
+//
+//void Fraction::Multi(Fraction& First, Fraction& Second)//Множення
+//{
+//	this->Set_Num(First.Get_Num() * Second.Get_Num());
+//	this->Set_Den(First.Get_Den() * Second.Get_Den());
+//}
+//
+void Fraction::Div(Fraction& First, Fraction& Second)// Ділення
+{
+	this->Set_Num(First.Get_Num() * Second.Get_Den());
+	this->Set_Den(First.Get_Den() * Second.Get_Num());
+}
+
+void Fraction::Simpl(void)
+{
+	int nod = 1;
+	for (int i = this->Get_Num(); i > 0; i--) {
+		if (this->Get_Num() % i == 0 && this->Get_Den() % i == 0) {
+			nod = i;
+			break;
+		}
+	}
+	int a = this->Get_Num();
+	this->Set_Num(a /= nod);
+
+	a = this->Get_Den();
+	this->Set_Den(a /= nod);
+}
+
+Fraction* Mas_of_Fraction[100];
+
+int InPut();
+void Swap(int);
+
+void main(void)
+{
+	Fraction* First = new Fraction; 
+	cout << "First:\n";
+	cin >> *First;
+	First->Simpl();
+	cout << "First:" << *First;
+
+	Fraction* Second = new Fraction;
+	cout << "Second:\n";
+	cin >> *Second;
+	Second->Simpl();
+	cout << "Second:" << *Second;
+
+	Fraction* Result = new Fraction;
+
+	Result = (*First + *Second);
+	Result->Simpl();
+	cout << "Addition OverLoad " << *Result;
+
+	cout << "Comparison " << First->operator>(*Second);
+	cout << "\n";
+
+	delete(Result);
+	delete(First);
+	delete(Second);
+	cout << "\n";
+	cout << "\n";
+	cout << "\n---------------------------------------------";
+	int len = InPut();
+
+	Swap(len);
+
+	for (int i = 0; i < len; i++) // вивід
+	{
+		cout << i+1 << "- part of mas = " << *Mas_of_Fraction[i];
+	}
+
+	Fraction* Result_of_Average = new Fraction(0, 1);
+
+	for (int i = 0; i < len; i++)
+	{
+		Result_of_Average = *Result_of_Average +(*Mas_of_Fraction[i]);
+	}
+	
+
+	Fraction *div = new Fraction(len, 1); // середнє
+
+	Result_of_Average->Div(*Result_of_Average,*div);
+
+	Result_of_Average->Simpl();
+	cout << "Average value " << *Result_of_Average;
+
+	getchar();
+	getchar();
+	getchar();
+}
+
+int InPut() 
+{
+	int i = 0;
+	while (i < 100) 
+	{
+		Mas_of_Fraction[i] = new Fraction;
+		cout << "Enter a fraction(Press Enter 0 0):\n";
+		cin >> *Mas_of_Fraction[i];
+		if (Mas_of_Fraction[i]->Get_Den() == 0 and Mas_of_Fraction[i]->Get_Num() == 0)
+		{
+			break;
+		}
+		i++;
+	}
+	return i;
+}
+void Swap(int len) 
+{
+	for (int i = 1; i < len; i++)
+	{
+		for (int j = i; j > 0 && Mas_of_Fraction[j - 1]->operator>(*Mas_of_Fraction[j]); j--)
+		{
+			Mas_of_Fraction[j - 1]->SwapF(*Mas_of_Fraction[j]);
+		}
+	}
+}

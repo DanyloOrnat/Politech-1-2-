@@ -1,0 +1,255 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <cmath>
+#include <iostream>
+#include <string.h>
+using namespace std;
+
+class Compettiton
+{
+	friend istream& operator>>(istream& in, Compettiton& Cmp)
+	{
+		cout << "\nEnter (Name - Start - End) " << endl;
+		return in >> Cmp.Name >> *Cmp.Start >> *Cmp.End;
+	}
+	friend ostream& operator<<(ostream& out, const Compettiton& Cmp)
+	{
+		return out << "Name: " << *Cmp.Name << "Date: " << *Cmp.Start << " - " << *Cmp.End << endl;
+	}
+
+protected:
+	char* Name = new char[20];
+	int* Start = new int;
+	int* End = new int;
+
+public:
+	Compettiton() { *Name = 'N'; *Start = 0; *End = 0; }
+	Compettiton(char name, int start, int end) { *Name = name; *Start = start; *End = end; }
+
+	~Compettiton() { delete Name; delete Start; delete End; }
+
+	char Get_Name() { return *this->Name; }
+	int Get_Start() { return *this->Start; }
+	int Get_End() { return *this->End; }
+
+	void Set_Name(char* a) { this->Name = a; }
+	void Set_Start(int a) { *this->Start = a; }
+	void Set_End(int a) { *this->End = a; }
+
+	virtual char* Get_Viner() { return 0; }
+	virtual char* Get_Semi() { return 0; }
+
+	virtual int AddToWiner() 
+	{
+		return 0;
+	}
+	virtual int AddToSemi()
+	{
+		return 0;
+	}
+
+};
+
+
+
+class Cup : public Compettiton
+{
+	friend istream& operator>>(istream& in, Cup& Cmp)
+	{
+		cout << "\nEnter (Name - Start - End - Viner - Semi) " << endl;
+		return in >> Cmp.Name >> *Cmp.Start >> *Cmp.End >> Cmp.Viner >> Cmp.Semi;
+	}
+	friend ostream& operator<<(ostream& out, const Cup& Cmp)
+	{
+		return out << "Name: " << *Cmp.Name << "\nDate: " << *Cmp.Start << " - " << *Cmp.End << "\nViner: " << *Cmp.Viner << "\nSemi: " << *Cmp.Semi << endl;
+	}
+
+private:
+	char* Viner = new char[20];
+	char* Semi = new char[20];
+public:
+	Cup() : Compettiton()
+	{
+		*Viner = 'N'; *Semi = 'N';
+	}
+
+	Cup(char name, int start, int end, char* viner, char* semi) : Compettiton(name, start, end)
+	{
+		*Viner = *viner; *Semi = *semi;
+	}
+
+	~Cup() { delete Viner; delete Semi; }
+
+	char* Get_Viner() { return this->Viner; }
+	char* Get_Semi() { return this->Semi; }
+
+	void Set_Viner(char* a) { this->Viner = a; }
+	void Set_Semi(char* a) { this->Semi = a; }
+
+	int AddToWiner() override
+	{
+		return 3;
+	}
+	 int AddToSemi() override
+	{
+		return 2;
+	}
+};
+
+class BigCup : public Compettiton
+{
+	friend istream& operator>>(istream& in, BigCup& Cmp)
+	{
+		cout << "\nEnter (Name - Start - End - Viner - Semi) " << endl;
+		return in >> Cmp.Name >> *Cmp.Start >> *Cmp.End >> Cmp.Viner >> Cmp.Semi;
+	}
+	friend ostream& operator<<(ostream& out, const BigCup& Cmp)
+	{
+		return out << "Name: " << *Cmp.Name << "\nDate: " << *Cmp.Start << " - " << *Cmp.End << "\nViner: " << *Cmp.Viner << "\nSemi: " << *Cmp.Semi << endl;
+	}
+
+private:
+	char* Viner = new char[20];
+	char* Semi = new char[20];
+public:
+	BigCup() : Compettiton()
+	{
+		*Viner = 'N'; *Semi = 'N';
+	}
+
+	BigCup(char name, int start, int end, char* viner, char* semi) : Compettiton(name, start, end)
+	{
+		*Viner = *viner; *Semi = *semi;
+	}
+
+	~BigCup() { delete Viner; delete Semi; }
+
+	char* Get_Viner() { return this->Viner; }
+	char* Get_Semi() { return this->Semi; }
+
+	void Set_Viner(char* a) { this->Viner = a; }
+	void Set_Semi(char* a) { this->Semi = a; }
+
+	int AddToWiner() override
+	{
+		return 2;
+	}
+	int AddToSemi() override
+	{
+		return 1;
+	}
+};
+
+Compettiton* Mas_of_Cups[100];
+char* Mas_of_Teams[200];
+int Mas_of_Vins[200];
+int Mas_of_Semi[200];
+int Mas_of_Points[200];
+
+int Real_Teams = 0;
+
+int InPut(void);
+void Count(int);
+
+
+void main(void)
+{
+	char str[20] = "lol";
+	Compettiton* test = new Compettiton(*str, 1952, 956);
+
+
+	int len = InPut();
+
+	for (int i = 0; i < 2 * len; i++)
+	{
+		Mas_of_Teams[i] = str;
+	}
+
+	Count(len);
+
+
+	for (int i = 0; i < Real_Teams; i++)
+	{
+		cout << "Team: " << Mas_of_Teams[i] << "   " << "Score: " << Mas_of_Points[i] << "   " << "Winner(Times): " << Mas_of_Vins[i] << "   " << "Semi(Times): " << Mas_of_Semi[i] << endl;
+	}
+}
+
+void Count(int len)
+{
+	for (int i = 0; i < len; i++)
+	{
+		bool Vin = true;
+		bool Sem = true;
+		char* str2 = new char[20];
+		int Real_Teams_Now = Real_Teams;
+
+		for (int j = 0; j <= Real_Teams_Now; j++)
+		{
+			Real_Teams_Now = Real_Teams;
+			str2 = Mas_of_Cups[i]->Get_Viner();
+			if (strcmp(Mas_of_Teams[j], str2) == 0)
+			{
+				Mas_of_Points[j] = Mas_of_Points[j] + Mas_of_Cups[i]->AddToWiner();
+				Mas_of_Vins[j] = Mas_of_Vins[j] + 1;
+				Mas_of_Semi[j] = Mas_of_Semi[j] + 1;
+				Vin = false;
+			}
+			str2 = Mas_of_Cups[i]->Get_Semi();
+			if ((strcmp(Mas_of_Teams[j], str2) == 0))
+			{
+				Mas_of_Points[j] = Mas_of_Points[j] + Mas_of_Cups[i]->AddToSemi();
+				Mas_of_Semi[j] = Mas_of_Semi[j] + 1;
+				Sem = false;
+			}
+			if (j == Real_Teams)
+			{
+				if (Vin)
+				{
+					Mas_of_Teams[Real_Teams] = Mas_of_Cups[i]->Get_Viner();
+					Mas_of_Points[Real_Teams] = Mas_of_Points[Real_Teams] + Mas_of_Cups[i]->AddToWiner();
+					Mas_of_Vins[Real_Teams] = Mas_of_Vins[Real_Teams] + 1;
+					Mas_of_Semi[Real_Teams] = Mas_of_Semi[Real_Teams] + 1;
+					Real_Teams++;
+				}
+				if (Sem)
+				{
+					Mas_of_Teams[Real_Teams] = Mas_of_Cups[i]->Get_Semi();
+					Mas_of_Points[Real_Teams] = Mas_of_Points[Real_Teams] + Mas_of_Cups[i]->AddToSemi();
+					Mas_of_Semi[Real_Teams] = Mas_of_Semi[Real_Teams] + 1;
+					Real_Teams++;
+				}
+			}
+		}
+	}
+}
+
+
+int InPut()
+{
+	int i = 0;
+	cout << "Enter a Cups(To exit enter all 0):\n";
+	while (i < 100)
+	{
+		Cup* NewCup = new Cup;
+		cin >> *NewCup;
+		if (NewCup->Get_Start() == 0 and NewCup->Get_End() == 0)
+		{
+			break;
+		}
+		Mas_of_Cups[i] = NewCup;
+		i++;
+	}
+	cout << "Enter a Super Cups(To exit enter all 0):\n";
+	while (i < 100)
+	{
+		BigCup* NewCup = new BigCup;
+		cin >> *NewCup;
+		if (NewCup->Get_Start() == 0 and NewCup->Get_End() == 0)
+		{
+			break;
+		}
+		Mas_of_Cups[i] = NewCup;
+		i++;
+	}
+	return i;
+}

@@ -1,0 +1,177 @@
+#include <iostream>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
+
+char Type;
+
+template<typename T>
+class Masive 
+{
+	friend istream& operator>>(istream& in, Masive<T>& Msv)
+	{
+		cout << "To Stop enter '0'" << endl;
+		int i = 0;
+		while (i < 100)
+		{
+			in >> Msv.First[i];
+			if (Type == 'i' or Type == 'd') 
+			{
+				if (Msv.First[i] == NULL)
+				{
+					break;
+				}
+			}
+			else 
+			{
+				if (Msv.First[i] == '0')
+				{
+					break;
+				}
+			}
+			i++;
+		}
+		return in;
+	}
+	friend ostream& operator<<(ostream& out, Masive<T>& Msv)
+	{
+		int i = 0;
+		while (i < 100)
+		{
+			if (Type == 'i' or Type == 'd')
+			{
+				if (Msv.First[i] == NULL)
+				{
+					break;
+				}
+			}
+			else
+			{
+				if (Msv.First[i] == '0')
+				{
+					break;
+				}
+			}
+			out << Msv.First[i] << endl;
+			i++;
+		}
+		return out;
+	}
+
+private:
+	T* First = new T[100];
+public:
+	Masive() 
+	{
+		for (int i = 0; i < 100; i++) 
+		{
+			this->First[i] = NULL;
+		}
+	}
+	Masive(string *str)
+	{
+		for (int i = 0; i < 100; i++)
+		{
+			this->First[i] = str[i];
+			if (str[i] == "0")
+			{
+				break;
+			}
+		}
+	}
+	~Masive() { delete First; }
+
+
+	T* Get_First(int b) { return *this->First[b]; }
+	void Set_First(T* a, int b) { *this->First[b] = a; }
+
+	Masive* operator=(Masive ms) 
+	{
+		int i = 0;
+		while (i < 100)
+		{
+			if (Type == 'i' or Type == 'd')
+			{
+				if (ms.First[i] == NULL)
+				{
+					break;
+				}
+			}
+			else
+			{
+				if (ms.First[i] == '0')
+				{
+					break;
+				}
+			}
+			this->First[i] = ms.First[i];
+			i++;
+		}
+		return this;
+	}
+	T& operator[]( int index)
+	{
+		return this->First[index];
+	}
+};
+
+void main() 
+{
+	
+
+	cout << "Integer" << endl << "" << endl;
+	Type = 'i';
+	Masive<int> Integer;	
+	cin >> Integer;
+	cout << "" << endl;
+	cout << Integer;
+	cout << "" << endl;
+
+	Masive<int> Integer2;
+	Integer2 = Integer;
+	cout << "Integer_copy" << endl;
+	cout << "" << endl;
+	cout << Integer2;
+	cout << "" << endl;
+
+	cout << "Double" << endl;
+	Type = 'd';
+	Masive<double> Double;
+	cin >> Double;
+	cout << "" << endl;
+	cout << Double;
+	cout << "" << endl;
+
+	cout << "Char" << endl;
+	Type = 'c';
+	Masive<char> Char;
+	cin >> Char;
+	cout << "" << endl;
+	cout << Char;
+	cout << "" << endl;
+
+	cout << "String" << endl;
+	Type = 's';
+	string str[100];
+	for (int i = 0; i < 100; i++)
+	{
+		cin >> str[i];
+		if (str[i] == "0")
+		{
+			break;
+		}
+	}
+	Masive<string> String(str);
+	cout << "" << endl;
+	for (int i = 0; i < 100; i++)
+	{
+		if (String[i] == "0")
+		{
+			break;
+		}
+		cout << String[i] << endl;
+	}
+	getchar();
+	getchar();
+}

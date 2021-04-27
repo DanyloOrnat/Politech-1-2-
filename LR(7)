@@ -1,0 +1,210 @@
+//На основі контейнера list побудувати однозв’язні лінійні списки цілих чисел та 
+//символьних рядків.Виконати операції створення нового елемента списку на його початку
+//вилучення першого елемента списку, створення нового елемента списку у його кінці, вилучення останнього елемента списку, 
+//виведення списку на екран.
+
+#include <time.h>
+#include <iostream>
+#include <list>
+#include <iterator>
+#include <string.h>
+#include <map>
+#include <fstream>
+using namespace std;
+
+
+
+template<typename T>
+class MyList
+{    
+    friend ifstream& operator >> (ifstream& ifs,  MyList<T>& List)
+    {
+        ifs.read((char*)&List, sizeof(MyList<T>));
+        return ifs;
+    }
+    friend ofstream& operator << (ofstream& ofs, MyList<T>& List)
+    {
+        ofs.write((char*)&List, sizeof(MyList<T>));
+        return ofs;
+    }
+public:
+    list<T> g;
+
+    MyList(list<T> lst)
+    {
+        this->g = lst;
+    }
+    ~MyList()
+    {
+        g.clear();
+    }
+
+    void showlist()
+    {
+        typename list <T> ::iterator inter;
+        for (inter = g.begin(); inter != g.end(); ++inter)
+            cout << '\t' << *inter;
+        cout << "\n\n";
+    }
+    void operator++()
+    {
+        g.pop_back();
+    }
+    void operator--()
+    {
+        g.pop_front();
+    }
+
+    void operator+(T new_value)
+    {
+        g.push_back(new_value);
+    }
+
+    void operator-(T new_value)
+    {
+        g.push_front(new_value);
+    }
+
+};
+
+
+
+void main()
+{
+    map<string, int> mapping;
+    mapping["first"] = 1;
+    mapping["last"] = 9;
+    mapping["both"] = 2;
+    mapping["noone"] = 0;
+
+    srand(time(0));
+    list<int> begin_of_list_int;
+    string path_int;
+
+    cout << "Enter the number of random integers: ";
+    int n = 0;
+    cin >> n;
+
+    for (int i = 0; i < n; i++)
+    {
+        begin_of_list_int.push_back(rand());
+    }
+
+    MyList<int> List_int(begin_of_list_int);
+    cout << "Your random integers : ";
+    List_int.showlist();
+
+    cout << "Enter the integer which you want to add at the end: ";
+    cin >> n;
+    List_int + n;
+    cout << "Enter the integer which you want to add at the begin: ";
+    cin >> n;
+    List_int - n;
+
+    cout << "\nYour edited list:";
+    List_int.showlist();
+
+    cout << "Enter a path to the file: ";
+    cin >> path_int;
+    
+    ofstream file_ptr_out;
+    ifstream file_ptr_in;
+
+    file_ptr_out.open(path_int);
+    
+    file_ptr_out << List_int;
+    cout << "\tList of integers saved successfully\n";
+    file_ptr_out.close();
+
+
+    list<string> begin_of_list_str;
+    string path_str;
+
+    cout << "\nEnter your strings(0 to stop): ";
+    string istr;
+    for (int i = 0; i < 100; i++)
+    {
+        cin >> istr;
+        if (istr == "0") {
+            break;
+        }
+        begin_of_list_str.push_back(istr);
+    }
+    MyList<string> List_str(begin_of_list_str);
+    cout << "Your strings : ";
+    List_str.showlist();
+
+    cout << "Enter the string which you want to add at the end: ";
+    cin >> istr;
+    List_str + istr;
+    cout << "Enter the string which you want to add at the begin: ";
+    cin >> istr;
+    List_str - istr;
+
+    cout << "\nYour edited list:";
+    List_str.showlist();
+
+    cout << "Enter a path to the file: ";
+    cin >> path_str;
+
+    file_ptr_out.open(path_str);
+    file_ptr_out << List_str;
+    cout << "\tList of strings saved successfully\n";
+    file_ptr_out.close();
+
+    string path;
+    cout << "\nEnter a path to file which you want open: ";
+    cin >> path;
+
+    if (path == path_int)
+    {
+        file_ptr_in.open(path);
+        file_ptr_in >> List_int;
+        file_ptr_in.close();
+
+        cout << "\nWhich elemet you want to delete: first,last,both,noone - ";
+        cin >> path;
+        switch (mapping[path])
+        {
+        case 1:
+            --List_int;
+            break;
+        case 9:
+            ++List_int;
+            break;
+        case 2:
+            --List_int;
+            ++List_int;
+            break;
+        default:
+            break;
+        }
+        List_int.showlist();
+    }
+    if (path == path_str)
+    {
+        file_ptr_in.open(path);
+        file_ptr_in >> List_str;
+        file_ptr_in.close();
+
+        cout << "\nWhich elemet you want to delete: first,last,both,noone - ";
+        cin >> path;
+        switch (mapping[path])
+        {
+        case 1:
+            --List_str;
+            break;
+        case 9:
+            ++List_str;
+            break;
+        case 2:
+            --List_str;
+            ++List_str;
+            break;
+        default:
+            break;
+        }
+        cout << "\nYour edited list:";
+        List_str.showlist();
+    }
+}

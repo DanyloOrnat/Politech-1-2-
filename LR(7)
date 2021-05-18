@@ -13,6 +13,18 @@
 using namespace std;
 
 
+typedef struct MyStruct1
+{
+    int value;
+    struct MyStruct1* next;
+} OneListInt;
+
+
+typedef struct MyStruct2
+{
+    string value;
+    struct MyStruct2* next;
+} OneListStr;
 
 template<typename T>
 class MyList
@@ -39,13 +51,22 @@ public:
         g.clear();
     }
 
-    void showlist()
+    void showlist_int()
     {
-        typename list <T> ::iterator inter;
+        typename list <OneListInt > ::iterator inter;
         for (inter = g.begin(); inter != g.end(); ++inter)
-            cout << '\t' << *inter;
+            cout << '\t' << inter->value;
         cout << "\n\n";
     }
+    void showlist_str()
+    {
+        typename list <OneListStr > ::iterator inter;
+        for (inter = g.begin(); inter != g.end(); ++inter)
+            cout << '\t' << inter->value;
+        cout << "\n\n";
+    }
+
+
     void operator++()
     {
         g.pop_back();
@@ -67,7 +88,17 @@ public:
 
 };
 
+OneListInt* Int_begin = NULL;
+OneListInt* Int_end = NULL;
+OneListInt* Int;
+OneListInt* Int_;
+OneListInt* New;
 
+OneListStr* Str_begin = NULL;
+OneListStr* Str_end = NULL;
+OneListStr* Str;
+OneListStr* Str_;
+OneListStr* New_str;
 
 void main()
 {
@@ -78,32 +109,60 @@ void main()
     mapping["noone"] = 0;
 
     srand(time(0));
-    list<int> begin_of_list_int;
+    list<OneListInt> begin_of_list_int;
     string path_int;
-
+    
     cout << "Enter the number of random integers: ";
     int n = 0;
     cin >> n;
 
+
+
     for (int i = 0; i < n; i++)
     {
-        begin_of_list_int.push_back(rand());
+        Int = (OneListInt*)malloc(sizeof(OneListInt));
+        Int->value = rand();
+        if (Int_begin == NULL)
+        {
+            Int->next = NULL;
+            Int_begin = Int_end = Int;
+        }
+        else 
+        {
+            Int_ = Int_begin;
+            while (Int_->next != NULL)
+            {
+                Int_ = Int_->next;
+            }
+            Int_->next = Int;
+            Int ->next = NULL;
+            Int_end = Int;
+        }
+        begin_of_list_int.push_back(*Int);
     }
 
-    MyList<int> List_int(begin_of_list_int);
+    MyList<OneListInt> List_int(begin_of_list_int);
     cout << "Your random integers : ";
-    List_int.showlist();
+    List_int.showlist_int();
 
     cout << "Enter the integer which you want to add at the end: ";
-    cin >> n;
-    List_int + n;
+    New = (OneListInt*)malloc(sizeof(OneListInt));
+    cin >> New->value;
+    Int_end->next = New;
+    Int_end = New;
+    New->next = NULL;
+    List_int + *New;
+
     cout << "Enter the integer which you want to add at the begin: ";
-    cin >> n;
-    List_int - n;
+    New = (OneListInt*)malloc(sizeof(OneListInt));
+    cin >> New->value; // тут закічив учаді я
+    New->next = Int_begin;
+    Int_begin = New;
+    List_int - *New;
 
     cout << "\nYour edited list:";
-    List_int.showlist();
-
+    List_int.showlist_int();
+   
     cout << "Enter a path to the file: ";
     cin >> path_int;
     
@@ -116,34 +175,66 @@ void main()
     cout << "\tList of integers saved successfully\n";
     file_ptr_out.close();
 
-
-    list<string> begin_of_list_str;
+ 
+    list<OneListStr> begin_of_list_str;
     string path_str;
+    OneListStr Str_new;
 
     cout << "\nEnter your strings(0 to stop): ";
     string istr;
     for (int i = 0; i < 100; i++)
     {
+        Str = new OneListStr;
         cin >> istr;
         if (istr == "0") {
             break;
         }
-        begin_of_list_str.push_back(istr);
+        Str->value.assign(istr);
+        if (Str_begin == NULL)
+        {
+            Str->next = NULL;
+            Str_begin = Str_end = Str;
+        }
+        else
+        {
+            Str_ = Str_begin;
+            while (Str_->next != NULL)
+            {
+                Str_ = Str_->next;
+            }
+            Str_->next = Str;
+            Str->next = NULL;
+            Str_end = Str;
+        }
+        begin_of_list_str.push_back(*Str);
+        
     }
-    MyList<string> List_str(begin_of_list_str);
+    MyList<OneListStr> List_str(begin_of_list_str);
     cout << "Your strings : ";
-    List_str.showlist();
+    List_str.showlist_str();
 
+
+    
     cout << "Enter the string which you want to add at the end: ";
-    cin >> istr;
-    List_str + istr;
+    New_str = new OneListStr;
+    cin >> New_str->value;
+    Str_end->next = New_str;
+    Str_end = New_str;
+    New_str->next = NULL;
+    List_str + *New_str;
+
     cout << "Enter the string which you want to add at the begin: ";
-    cin >> istr;
-    List_str - istr;
+    cin >> New_str->value; // тут закічив учаді я
+    New_str->next = Str_begin;
+    Str_begin = New_str;
+    List_str - *New_str;
+
 
     cout << "\nYour edited list:";
-    List_str.showlist();
-
+    List_str.showlist_str();
+    
+    
+   
     cout << "Enter a path to the file: ";
     cin >> path_str;
 
@@ -151,7 +242,7 @@ void main()
     file_ptr_out << List_str;
     cout << "\tList of strings saved successfully\n";
     file_ptr_out.close();
-
+   
     string path;
     cout << "\nEnter a path to file which you want open: ";
     cin >> path;
@@ -179,8 +270,8 @@ void main()
         default:
             break;
         }
-        List_int.showlist();
-    }
+        List_int.showlist_int();
+    } 
     if (path == path_str)
     {
         file_ptr_in.open(path);
@@ -205,6 +296,6 @@ void main()
             break;
         }
         cout << "\nYour edited list:";
-        List_str.showlist();
+        List_str.showlist_str();
     }
 }

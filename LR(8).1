@@ -1,0 +1,148 @@
+#include <iostream>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
+
+char Type;
+int count = 0;
+
+template<typename T>
+class Masive
+{
+	friend istream& operator>>(istream& in, Masive<T>& Msv)
+	{
+		cout << "To Stop enter '0'" << endl;
+		int i = 0;
+		while (i < 100)
+		{
+			in >> Msv.First[i];
+			if (Type == 'i' or Type == 'd')
+			{
+				if (Msv.First[i] == NULL)
+				{
+					break;
+				}
+			}
+			else
+			{
+				if (Msv.First[i] == '0')
+				{
+					break;
+				}
+			}
+			i++;
+			::count = i;
+		}
+		return in;
+	}
+	friend ostream& operator<<(ostream& out, Masive<T>& Msv)
+	{
+		out << Msv.First << endl;
+		return out;
+	}
+
+private:
+	T* First = new T[100];
+public:
+	Masive()
+	{
+		for (int i = 0; i < 100; i++)
+		{
+			this->First[i] = NULL;
+		}
+	}
+	Masive(string* str)
+	{
+		for (int i = 0; i < 100; i++)
+		{
+			this->First[i] = str[i];
+			if (str[i] == "0")
+			{
+				break;
+			}
+		}
+	}
+	~Masive() { delete First; }
+
+
+	T* Get_First(int b) { return *this->First[b]; }
+	void Set_First(T* a, int b) { *this->First[b] = a; }
+
+	Masive* operator=(Masive ms)
+	{
+		int i = 0;
+		while (i < 100)
+		{
+			if (Type == 'i' or Type == 'd')
+			{
+				if (ms.First[i] == NULL)
+				{
+					break;
+				}
+			}
+			else
+			{
+				if (ms.First[i] == '0')
+				{
+					break;
+				}
+			}
+			this->First[i] = ms.First[i];
+			i++;
+		}
+		return this;
+	}
+	T& operator[](int index2)
+	{
+		return this->First[index2];
+	}
+
+	friend class Iterator;
+
+};
+
+
+class Iterator
+{
+private:
+	const  Masive<int>& masive;
+	int index = 0;
+
+public:
+	Iterator(const Masive<int>& prg) : masive(prg)
+	{
+		index = 0;
+	}
+	void operator++(int)
+	{
+		index++;
+	}
+	bool operator()()
+	{
+		return index != ::count;
+	}
+	int operator *()
+	{
+		return masive.First[index];
+	}
+
+};
+
+void main()
+{
+
+
+	cout << "Integer" << endl << "" << endl;
+	Type = 'i';
+	Masive<int> Integer;
+	cin >> Integer;
+	cout << "" << endl;
+	Iterator iter(Integer);
+	while (iter())
+	{
+		cout << *iter << endl;
+		iter++;
+	}
+	cout << "" << endl;
+}
